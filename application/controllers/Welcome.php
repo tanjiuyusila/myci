@@ -36,18 +36,52 @@ class Welcome extends CI_Controller {
         $name = $this->input->post('username');
         $pwd1 = $this->input->post('pwd1');
         $pwd2 = $this->input->post('pwd2');
+//        $data = array(
+//            'name_error' => '用户名不能为空'
+//        );
+//        //2.验证
+//        if($name == ''){
+//            $this -> load->view('regist',$data); //路由是save，load是加载页面写两次会加载出两个界面
+////            redirect("welcome/regist");   //重定向
+//            //辨析：1.重定向：
+//            //2.加载：
+//        }else{
+//            echo 'success';
+//        };
         $data = array(
-            'name_error' => '用户名不能为空'
+            'name'=>$name
         );
-        //2.验证
+        $flag = TRUE;
         if($name == ''){
-            $this -> load->view('regist',$data); //路由是save，load是加载页面写两次会加载出两个界面
-//            redirect("welcome/regist");   //重定向
-            //辨析：1.重定向：
-            //2.加载：
-        }else{
-            echo 'success';
+            $data['name_error'] = '用户名不能为空';
+//            $flag =FALSE;     //法1
         };
+        if($pwd1 != $pwd2){
+            $data['pwd_error'] = '密码不一致';
+//            $flag =FALSE;     //法1
+        }
+//        if($flag == FALSE){    //法1
+//        if(count($data) != 0) {
+//            $this->load->view('regist',$data);
+//        } else{
+//            echo 'success';
+//        }
+        if(count($data) > 1){
+            $this -> load->view('regist',$data);
+        }else{
+
+            //3.连接数据库(加载model, 调用model里面的方法)
+
+            $this -> load ->model("User_model");
+
+            $rows = $this -> User_model -> save($name,$pwd1);
+
+            if($rows > 0){
+                echo 'success';
+            }else{
+                echo 'fail';
+            }
+        }
     }
 
 //   http://localhost/myci/welcome/login
